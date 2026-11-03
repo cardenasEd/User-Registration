@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create an Account</title>
+</head>
+<body>
+    <h1>Create an Account</h1>
+
+    <form id="registrationForm">
+        <label for="username">Username</label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            minlength="3"
+            maxlength="50"
+            required
+        >
+
+        <br><br>
+
+        <label for="email">Email</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            maxlength="255"
+            required
+        >
+
+        <br><br>
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            minlength="12"
+            required
+        >
+
+        <br><br>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <script>
+        const form = document.getElementById("registrationForm");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            message.textContent = "Creating account...";
+
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password
+                    })
+                });
+
+                const result = await response.json();
+
+                message.textContent = result.message || result.error;
+
+                if (response.ok) {
+                    form.reset();
+                }
+            } catch (error) {
+                message.textContent =
+                    "Unable to contact the server. Please try again.";
+            }
+        });
+    </script>
+</body>
+</html>
